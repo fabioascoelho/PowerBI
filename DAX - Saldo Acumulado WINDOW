@@ -5,8 +5,8 @@ VAR _Ano =
         WINDOW (
             1, ABS,
             0, REL,
-            ALLSELECTED (  d_Calendario[Data].[Ano] ),
-            ORDERBY ( d_Calendario[Data].[Ano], ASC )
+            ALLSELECTED (  d_Calendario[Ano] ),
+            ORDERBY ( d_Calendario[Ano], ASC )
         )
     )
 VAR _Trim =
@@ -15,8 +15,8 @@ VAR _Trim =
         WINDOW (
             1, ABS,
             0, REL,
-            ALLSELECTED (  d_Calendario[Data].[Trimestre], d_Calendario[Data].[QuarterNo] ),
-            ORDERBY ( d_Calendario[Data].[QuarterNo], ASC )
+            ALLSELECTED (  d_Calendario[Trimestre] ),
+            ORDERBY ( d_Calendario[Trimestre], ASC )
         )
     )
 VAR _TrimAno =
@@ -25,9 +25,9 @@ VAR _TrimAno =
         WINDOW (
             1, ABS,
             0, REL,
-            ALLSELECTED (  d_Calendario[Data].[Trimestre], d_Calendario[Data].[QuarterNo], d_Calendario[Data].[Ano] ),
-            ORDERBY ( d_Calendario[Data].[QuarterNo], ASC ),
-            PARTITIONBY( d_Calendario[Data].[Ano] )
+            ALLSELECTED (  d_Calendario[Trimestre], d_Calendario[Ano] ),
+            ORDERBY ( d_Calendario[Trimestre], ASC ),
+            PARTITIONBY( d_Calendario[Ano] )
         )
     )
 VAR _Mes =
@@ -36,8 +36,8 @@ VAR _Mes =
         WINDOW (
             1, ABS,
             0, REL,
-            ALLSELECTED (  d_Calendario[Data].[Mês], d_Calendario[Data].[MonthNo] ),
-            ORDERBY ( d_Calendario[Data].[Mês], ASC )
+            ALLSELECTED (  d_Calendario[Mês], d_Calendario[Nº Mês] ),
+            ORDERBY ( d_Calendario[Nº Mês], ASC ),
         )
     )
 VAR _MesTrim =
@@ -46,9 +46,9 @@ VAR _MesTrim =
         WINDOW (
             1, ABS,
             0, REL,
-            ALLSELECTED (  d_Calendario[Data].[Mês], d_Calendario[Data].[MonthNo], d_Calendario[Data].[Trimestre], d_Calendario[Data].[QuarterNo] ),
-            ORDERBY ( d_Calendario[Data].[MonthNo], ASC ),
-            PARTITIONBY ( d_Calendario[Data].[Trimestre] )
+            ALLSELECTED (  d_Calendario[Mês], d_Calendario[Nº Mês], d_Calendario[Trimestre] ),
+            ORDERBY ( d_Calendario[Nº Mês], ASC ),
+            PARTITIONBY ( d_Calendario[Trimestre] )
         )
     )
 VAR _MesTrimAno =
@@ -57,24 +57,24 @@ VAR _MesTrimAno =
         WINDOW (
             1, ABS,
             0, REL,
-            ALLSELECTED (  d_Calendario[Data].[Mês], d_Calendario[Data].[MonthNo], d_Calendario[Data].[Trimestre], d_Calendario[Data].[QuarterNo], d_Calendario[Data].[Ano] ),
-            ORDERBY ( d_Calendario[Data].[MonthNo], ASC ),
-            PARTITIONBY ( d_Calendario[Data].[Trimestre], d_Calendario[Data].[Ano] )
+            ALLSELECTED (  d_Calendario[Mês], d_Calendario[Nº Mês], d_Calendario[Trimestre], d_Calendario[Ano] ),
+            ORDERBY ( d_Calendario[Nº Mês], ASC ),
+            PARTITIONBY ( d_Calendario[Trimestre], d_Calendario[Ano] )
         )
     )
 VAR _Resultado = 
     SWITCH (
             TRUE ( ),
-            ISINSCOPE ( d_Calendario[Data].[Mês] ) 
-                && HASONEVALUE ( d_Calendario[Data].[Trimestre] )
-                && HASONEVALUE ( d_Calendario[Data].[Ano] ), _MesTrimAno,
-            ISINSCOPE ( d_Calendario[Data].[Mês] ) 
-                && HASONEVALUE ( d_Calendario[Data].[Trimestre] ), _MesTrim,
-            ISINSCOPE ( d_Calendario[Data].[Mês] ), _Mes,
-            ISINSCOPE ( d_Calendario[Data].[Trimestre] )
-                && HASONEVALUE ( d_Calendario[Data].[Ano] ), _TrimAno,
-            ISINSCOPE ( d_Calendario[Data].[Trimestre] ), _Trim,
-            ISINSCOPE ( d_Calendario[Data].[Ano] ), _Ano
+            ISINSCOPE ( d_Calendario[Mês] ), _Mes,
+            ISINSCOPE ( d_Calendario[Mês] ) 
+                && HASONEVALUE ( d_Calendario[Trimestre] )
+                && HASONEVALUE ( d_Calendario[Ano] ), _MesTrimAno,
+            ISINSCOPE ( d_Calendario[Mês] ) 
+                && HASONEVALUE ( d_Calendario[Trimestre] ), _MesTrim,
+            ISINSCOPE ( d_Calendario[Trimestre] )
+                && HASONEVALUE ( d_Calendario[Ano] ), _TrimAno,
+            ISINSCOPE ( d_Calendario[Trimestre] ), _Trim,
+            ISINSCOPE ( d_Calendario[Ano] ), _Ano
         )
 RETURN
     _Resultado
